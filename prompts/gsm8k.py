@@ -84,11 +84,6 @@ Question: {input}
 '''
 
 
-
-
-
-
-
 agent_cot_prompt = '''Task: Answer the given question step-by-step, and conclude with the phrase 'so the final answer is: '.
 
 Question: Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?
