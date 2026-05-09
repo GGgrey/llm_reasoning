@@ -8,7 +8,7 @@ from prompts.hotpotqa import *
 from fuzzywuzzy import fuzz
 import jsonlines
 
-#unfinished 
+
 class HotpotQA(Task):
     """
     Input (x)   : A question comparing the number of people related to Genghis Khan and Julius Caesar
@@ -28,7 +28,6 @@ class HotpotQA(Task):
         if not os.path.isfile(path):
             raise ValueError(f"File {file} not found at {path}")
         
-
         self.data = []
         self.ground_truth = []
 
@@ -36,8 +35,6 @@ class HotpotQA(Task):
             for obj in reader:
                 self.data.append(obj['question'])
                 self.ground_truth.append(obj['answer'])
-
-
         
         self.value_cache = {}
         self.steps = 3
@@ -53,57 +50,43 @@ class HotpotQA(Task):
 
     def test_output(self, idx: int, output: str):
 
-        # 检查输出是否包含 'answer is'，如果没有则返回0
         if 'answer is' not in output.lower():
             print('====output====')
             print(output)
             return {'r': 0}
         
-        # 尝试从输出中提取最终答案
         expression = self.extract_answer(output)
         expression = expression.replace(': ', '').strip()
         ground_truth = str(self.ground_truth[idx])
 
-        # 打印对比信息
         print(f'====GR===={ground_truth}====Pre===={expression}')
         
-        # 直接比较 ground_truth 和提取的 expression
         if ground_truth in expression:
             return {'r': 1}
         else:
-            # 处理格式化问题，例如去除标点符号等
             expression_ = re.sub(r'\W+', '', expression, flags=re.IGNORECASE)
             ground_truth_ = re.sub(r'\W+', '', ground_truth, flags=re.IGNORECASE)
             
-            # 正则表达式匹配去掉非字母数字字符后的表达式
             if re.search(ground_truth_, expression_, re.IGNORECASE):
                 return {'r': 1}
             else:
-                # 模糊匹配，使用fuzzywuzzy库
                 similarity = fuzz.ratio(expression_, ground_truth_)
-                if similarity > 95:  # 设置合理的相似度阈值
+                if similarity > 95:
                     return {'r': 1}
                 
-                # 如果仍然不匹配，则使用部分匹配策略
                 ground_truth_parts = ground_truth.split(' ')
-                #flag = any(re.search(part, expression, re.IGNORECASE) for part in ground_truth_parts)
                 flag = any(re.search(re.escape(part), expression, re.IGNORECASE) for part in ground_truth_parts)
 
                 return {'r': 1} if flag else {'r': 0}
 
     def extract_answer(self, output: str) -> str:
-        """
-        尝试从输出中提取答案，支持多种格式，并处理换行符和其他格式问题。
-        """
-        output = output.replace('\n', ' ').strip()  # 移除换行符，并清除首尾的空格
+        output = output.replace('\n', ' ').strip()
         
-        # 优先寻找 "the final answer is" 格式
         if 'the final answer is' in output.lower():
             return output.lower().split('the final answer is')[-1].strip().split('.')[0].strip()
         elif 'final answer' in output.lower():
             return output.lower().split('final answer')[-1].strip().split('.')[0].strip()
         else:
-            # 如果没有明确的标记，则尝试返回最后一句话作为默认答案
             return output.strip().split('.')[-1].strip()
 
     @staticmethod
@@ -124,6 +107,7 @@ class HotpotQA(Task):
             return value_evaluate + x + '\nThought Process: ' + y + '\nEvaluation Process:\n'
         else:
             return final_evaluate + x + '\n' + y + '\nEvaluation Process: \n'
+        
     @staticmethod
     def self_process_value_prompt_wrap(x: str, y: str) -> str:
         return value_evaluate + x + '\nThought Process: ' + y + '\nEvaluation Process:\n'

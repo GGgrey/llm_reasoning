@@ -5,6 +5,7 @@ from tasks.base import Task, DATA_PATH
 from prompts.crosswords import * 
 from models.base_model import gpt
 
+
 class MiniCrosswordsEnv:
     def __init__(self, file='mini0505.json'):
         self.file = os.path.join(DATA_PATH, 'crosswords', file)
@@ -16,10 +17,8 @@ class MiniCrosswordsEnv:
         self.times = 0
         self.prompt_status_cache = {}
 
-
     def __len__(self):
         return self.n
-    
 
     def reset(self, idx, board=None, status=None, steps=None):
         self.idx = idx
@@ -38,11 +37,9 @@ class MiniCrosswordsEnv:
             self.steps = steps
         return self.render()
     
-
     def prompt_status(self):
         count = {'sure': 0, 'maybe': 0, 'impossible': 0}
         for ans, data, status in zip(self.ans, self.data, self.status):
-            # if status != 0: continue
             if ans.count('_') >= 4: continue
             ans = ' '.join(ans.lower())
             line = f'{data}: {ans}'
@@ -52,28 +49,21 @@ class MiniCrosswordsEnv:
             else:
                 res = gpt(prompt)[0]
                 self.prompt_status_cache[prompt] = res
-            # print(line)
-            # print(res)
-            # print()
             res = res.split('\n')[-1].strip()
             if res in count: count[res] += 1
-        # print(count)
         return count
     
-
     def render_gt_board(self):
         s = "GT Board:\n"
         for i in range(5):
             s += ' '.join(self.board_gt[i*5:(i+1)*5]) + '\n'
         return s
     
-
     def render_board(self):
         s = "Current Board:\n"
         for i in range(5):
             s += ''.join(self.board[i*5:(i+1)*5]) + '\n'
         return s
-
 
     def render_clues(self, status=None):
         s = ""
@@ -87,7 +77,6 @@ class MiniCrosswordsEnv:
                 s += 'v' + str(i-5+1) + '. ' + self.data[i] + '\n'
         return s
     
-
     def render_ans(self, status=None):
         s = ""
         # s += "Horizontal:\n"
@@ -100,7 +89,6 @@ class MiniCrosswordsEnv:
                 s += 'v' + str(i-5+1) + '. ' + self.data[i] + ': ' + self.ans[i] + '\n'
         return s
     
-
     def render_gt_ans(self, status=None):
         s = ""
         # s += "Horizontal:\n"
@@ -113,13 +101,11 @@ class MiniCrosswordsEnv:
                 s += 'v' + str(i-5+1) + '. ' + self.data[i] + ': ' + self.ans_gt[i] + '\n'
         return s
 
-
     def render(self, status=True):
         if status:
             return self.render_board() + '\nUnfilled:\n' + self.render_ans(status=0) + '\nFilled:\n' + self.render_ans(status=1) + '\nChanged:\n' + self.render_ans(status=2)
         else:
             return self.render_board() + '\n' + self.render_ans()
-    
 
     def get_ans(self, board):
         ans = [''] * 10
@@ -129,7 +115,6 @@ class MiniCrosswordsEnv:
             ans[i+5] = ''.join(board[i::5])
         return ans
     
-
     def step(self, action):
         self.steps += 1
         action = action.split('\n')[-1]
@@ -170,11 +155,8 @@ class MiniCrosswordsTask(Task):
     Output Example: 
     """
     def __init__(self, file='mini0505.json'):
-        """
-        file: a csv file (fixed)
-        """
         super().__init__()
-        self.env = MiniCrosswordsEnv(file)  # use it as a stateless tool
+        self.env = MiniCrosswordsEnv(file)
         self.xs = []
         for idx in range(len(self.env)):
             self.env.reset(idx)
@@ -182,24 +164,12 @@ class MiniCrosswordsTask(Task):
         self.steps = 10  # TODO: variable steps??
         self.cache_proposals = {}
 
-
     def __len__(self) -> int:
         return len(self.env)
     
-
     def get_input(self, idx: int) -> str:
         self.env.reset(idx)
         return self.env.render_clues()
-    
-
-    # def test_output(self, idx: int, output: str):  # TODO: r_word for now
-    #     self.env.reset(idx)
-    #     info = {'r_word': 0}
-    #     for line in output.split('\n'):
-    #         if line.startswith('h') or line.startswith('v'):
-    #             _, _, _, info = self.env.step(line)
-    #     return info['r_word']
-    
 
     def test_output(self, idx: int, output: str):
         self.env.reset(idx)
@@ -210,32 +180,26 @@ class MiniCrosswordsTask(Task):
             word = ''.join(letters)
             word = word + '_' * (5 - len(word))
             action = f'h{i}. {word}'
-            # print(action)
             _, _, _, info = self.env.step(action)
         info['r'] = info['r_word']
         return info
 
-
     def set_status(self, x: str, y: str):
         idx = self.xs.index(x)
-        self.test_output(idx, y)  # update self.env
+        self.test_output(idx, y)
     
-
     @staticmethod
     def standard_prompt_wrap(x: str, y:str='') -> str:
         return standard_prompt.format(input=x) + y
-
 
     @staticmethod
     def cot_prompt_wrap(x: str, y:str='') -> str:
         return cot_prompt.format(input=x) + y
     
-
     def propose_prompt_wrap(self, x: str, y: str='') -> str:
         self.set_status(x, y)
         return propose_prompt.format(input=self.env.render())
     
-
     def propose_outputs_unwrap(self, x: str, y: str, outputs: list, n_max_propose: int) -> list:
         confidence_to_value = {'certain': 1, 'high': 0.5, 'medium': 0.2, 'low': 0.1}  # TODO: ad hoc
         proposals_to_scores = {}
@@ -256,7 +220,6 @@ class MiniCrosswordsTask(Task):
         proposals = [y + proposal[0] + '\n' for proposal in proposals]
         self.cache_proposals[(x, y, n_max_propose)] = proposals
         return proposals
-    
     
     def evaluate(self, x: str, y: str, n_evaluate_sample: int) -> int:
         self.set_status(x, y)

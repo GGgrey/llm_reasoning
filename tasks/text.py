@@ -35,7 +35,6 @@ class TextTask(Task):
         score_outputs = gpt(prompt, n=5, model='gpt-4')
         scores = []
         for score_output in score_outputs:
-            # print(score_output)
             pattern = r".*coherency score is (\d+).*"
             match = re.match(pattern, score_output, re.DOTALL)
             if match:
@@ -44,7 +43,6 @@ class TextTask(Task):
             else:
                 print(f'------------------score no match: {[score_output]}')
         print(scores)
-        # print('------------')
         info = {'rs': scores, 'r': sum(scores) / len(scores) if scores else 0}
         return info
     
@@ -60,8 +58,6 @@ class TextTask(Task):
     def vote_prompt_wrap(x: str, ys: list) -> str:
         prompt = vote_prompt
         for i, y in enumerate(ys, 1):
-            # y = y.replace('Plan:\n', '')
-            # TODO: truncate the plan part?
             prompt += f'Choice {i}:\n{y}\n'
         return prompt
     

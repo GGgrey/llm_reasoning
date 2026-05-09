@@ -26,7 +26,7 @@ def append_to_json_list(file, new_object):
             if pos > 1:  # File is not empty (contains objects)
                 f.seek(pos, os.SEEK_SET)
                 f.write(',\n')  # Add a comma and newline before the new object
-            else:  # File is empty (only contains [])
+            else:
                 f.seek(pos, os.SEEK_SET)
         else:
             raise ValueError("Invalid JSON format in file.")

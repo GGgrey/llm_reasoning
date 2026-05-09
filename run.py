@@ -89,7 +89,6 @@ def run(args):
         print(f"{'='*40}\n")
 
         x = task.get_input(i)
-        # solver = TestTimeCompute(task, args)
         ys, info = solver.solve(x, i, to_print=True)
         infos_output = [task.test_output(i, y) for y in ys]
 

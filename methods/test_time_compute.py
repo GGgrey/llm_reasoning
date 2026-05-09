@@ -75,11 +75,9 @@ class TestTimeCompute:
             elif args.backend_prm == "gpt-4o" or args.backend_prm.startswith("llama") or args.backend_prm.startswith("Qwen2") or args.backend_prm.startswith("Mistral") or args.backend_prm.startswith("internlm") or args.backend_prm.startswith("QwQ"):
                 self.prm = partial(request_gpt, model=args.backend_prm, temperature=args.temperature, max_tokens=args.max_tokens, port = args.port, gpu_memory_utilization=args.reward_gpu_memory_utilization)
 
-
     # Only for mutual consistency
     def get_mutual_completion_tokens(self):
         return self.mutual_completion_tokens
-
 
     # Generate
     def generate_sentences(self, prompt, n_samples, stop=None, model_index="", baseline=""):
@@ -95,8 +93,6 @@ class TestTimeCompute:
         else:
             return [g.strip() for g in generated]
 
-
-    # Value
     def get_values(self, x, ys):
         # Extract the last question, avoiding the few-shot examples
         x = extract_last_question(x)
@@ -204,7 +200,6 @@ class TestTimeCompute:
         
         return values
 
-
     # Methods
     def solve(self, x, idx, to_print=True):
         if self.args.baseline == "naive":
@@ -248,7 +243,6 @@ class TestTimeCompute:
     def solve_cer(self, x, idx, to_print=True):
         return [], {"steps": ""}
 
-
     # IO
     def solve_naive(self, x, idx, to_print=True):
         if self.args.prompt_sample == "standard":
@@ -266,7 +260,6 @@ class TestTimeCompute:
         if to_print:
             print(final_answer)
         return [final_answer], {"steps": step_data}
-
 
     # Multi-LLM Naive Solitaire
     def solve_multi_llm_naive_solitaire(self, x, idx, to_print=True):
@@ -338,7 +331,6 @@ class TestTimeCompute:
         final_answer = current_solution.strip()
         return [final_answer], {'steps': step_data}
     
-
     # Multi-LLM Naive Confidence Boost
     def solve_multi_llm_naive_confidence_boost(self, x, idx, to_print=True):
         if self.args.prompt_sample == "cot":
@@ -456,7 +448,6 @@ class TestTimeCompute:
         final_answer = current_solution.strip()
         return [final_answer], {'steps': step_data}
     
-
     # Multi-LLM Adaptive Weighted Majority Vote
     def solve_multi_llm_adaptive_consensus(self, x, idx, to_print=True):
         retry_count = 0
@@ -587,7 +578,6 @@ class TestTimeCompute:
             # If no valid answer is found, increment retry count and try again
             retry_count += 1
             print(f"Retrying... ({retry_count}/{max_retry})")
-
 
     # Multi-LLM Adaptive Majority Vote
     def solve_multi_llm_adaptive_majority(self, x, idx, to_print=True):
@@ -728,7 +718,6 @@ class TestTimeCompute:
             retry_count += 1
             print(f"Retrying... ({retry_count}/{max_retry})")
 
-
     # Greedy
     def solve_greedy(self, x, idx, to_print=True):
         if self.args.prompt_sample == "standard":
@@ -800,7 +789,6 @@ class TestTimeCompute:
         # Process the final answer
         final_answer = current_solution.strip()
         return [final_answer], {'steps': step_data}
-
 
     # Confidence Voting
     def solve_adaptive_paraphrase_majority(self, x, idx, to_print=True, max_retry=5):
@@ -982,7 +970,6 @@ class TestTimeCompute:
             retry_count += 1
             print(f"Retrying... ({retry_count}/{max_retry})")
 
-
     # Majority Vote
     def solve_majority(self, x, idx, to_print=True, max_retry=5):
         retry_count = 0
@@ -1049,7 +1036,6 @@ class TestTimeCompute:
         print("Maximum retries reached. Returning final answer")
         return ["the final answer is "], {"info": info}
     
-
     # Confidence Weighted Majority Vote
     def solve_confidence_weighted_majority(self, x, idx, to_print):
         # Generate the prompt based on the selected mode
@@ -1216,7 +1202,6 @@ class TestTimeCompute:
 
         return matching_candidates, {"info": info}
     
-
     # Mutual Consistency
     def solve_mutual_consistency(self, x, idx, to_print):
         # Generate the prompt based on the selected mode
@@ -1313,7 +1298,6 @@ class TestTimeCompute:
 
         return [matching_candidate], {"info": info}
 
-
     # Weighted Majority Vote
     def solve_best_of_n_with_weighted_voting(self, x, idx, to_print=True):
         # Generate the prompt based on the selected mode
@@ -1392,7 +1376,6 @@ class TestTimeCompute:
         # Return the best candidate and the info dictionary
         return [best_candidate], {'info': info}
     
-
     # Weighted Majority Vote
     def solve_best_of_n_with_weighted_voting(self, x, idx, to_print=True):
         # Generate the prompt based on the selected mode
@@ -1470,7 +1453,6 @@ class TestTimeCompute:
 
         # Return the best candidate and the info dictionary
         return [best_candidate], {'info': info}
-
 
     # Best-of-N
     def solve_best_of_n(self, x, idx, to_print=True):
@@ -1514,7 +1496,6 @@ class TestTimeCompute:
         # Return the best candidate and the info dictionary
         return [best_candidate], {'info': info}
 
-
     # Call for Self-Refine
     def self_refine(self, input, solution, average_logp, iteration):
         current_ans = solution
@@ -1529,7 +1510,6 @@ class TestTimeCompute:
                 logp = math.exp(cumulative_logprobs[0] / len(output_token_ids[0]))
         
         return current_ans, logp
-
 
     # Self-Refine
     def solve_self_refine(self, x, idx, to_print=True):
@@ -1562,7 +1542,6 @@ class TestTimeCompute:
 
         return [current_ans], {'info': info}
     
-
     # Beam Search
     def solve_beam_search(self, x, idx, to_print=True):
         # Generate the initial prompt
@@ -1652,20 +1631,8 @@ class TestTimeCompute:
         ys = extract_last_answer(best_prompt + " " + candid)
         return [ys], {'steps': step_data}
 
-
     # ToT DFS
     def solve_dfs(self, x, idx, to_print=True):
-        """
-        Perform Depth-First Search (DFS) to explore possible solutions.
-
-        Args:
-            root (MCTSNode): The root node to start DFS from.
-            max_depth (int): The maximum depth to search.
-            to_print (bool): Whether to print intermediate results.
-
-        Returns:
-            str: The best solution found during the DFS.
-        """
         if self.args.prompt_sample == 'standard':
             initial_prompt = self.task.standard_prompt_wrap(x, "")
         elif self.args.prompt_sample == 'cot':
@@ -1705,7 +1672,7 @@ class TestTimeCompute:
                         if current_node.MC_estimate > best_score:
                             best_score = current_node.MC_estimate
                             best_solution = current_node
-                    else:  # 'min'
+                    else:
                         if current_node.MC_estimate < best_score:
                             best_score = current_node.MC_estimate
                             best_solution = current_node
@@ -1776,14 +1743,8 @@ class TestTimeCompute:
 
         return [ys], {'info': info, 'best_path': best_path}
 
-
     # MCTS
     def solve_mcts(self, x, idx, to_print=True):
-        '''
-        Follow the paper: AlphaZero-Like Tree-Search can Guide Large Language Model Decoding and Training
-        
-        Only mcts_alpha is usable
-        '''
         if self.args.prompt_sample == 'standard':
             initial_prompt = self.task.standard_prompt_wrap(x, "")
         elif self.args.prompt_sample == 'cot':
@@ -1858,12 +1819,8 @@ class TestTimeCompute:
 
         return [ys], {'steps': steps, 'info': info}
 
-    
     # MCTS main loop
     def mcts_alpha_search(self, root, n_generate_sample, num_simulation, c_base, c_init, max_depth, sample_action, to_print):
-        """
-        Perform MCTS-Alpha search.
-        """
         
         def action(node):
             temperature = 1.0
@@ -1905,13 +1862,8 @@ class TestTimeCompute:
                 break
         return current_node # Choose the best child without exploration
     
-    
     # MCTS Selection
     def select_best_child(self, node, c_base=19652, c_init=1.25):
-        """
-        Select the best child using refined PUCT formula.
-        The cpuct is dynamically adjusted based on the number of total visits.
-        """
         best_value = -float('inf')
         best_child = None
 
@@ -1927,21 +1879,8 @@ class TestTimeCompute:
 
         return best_child
 
-
     # MCTS Expansion
     def expand(self, node, n_generate_sample):
-        """
-        Expand the given node by sampling its children based on a temperature-scaled 
-        probability distribution proportional to the value function.
-
-        Args:
-            node (MCTSNode): The current node to expand.
-            n_generate_sample (int): Number of actions to generate.
-
-        Returns:
-            MCTSNode: The selected child node based on the sampling probability.
-        """
-
         print("\n===== Starting Expand =====")
         print(f"Expanding node at depth {node.depth}")
         print(f"Generating up to {n_generate_sample} candidate actions")
@@ -1992,7 +1931,6 @@ class TestTimeCompute:
 
         return random.choice(node.children)
 
-
     # MCTS Simulation
     def simulate(self, state, current_depth, max_depth):
         current_state = state
@@ -2024,7 +1962,6 @@ class TestTimeCompute:
 
         return total_reward, step_rewards, current_state
 
-
     # MCTS Backpropagation
     def backpropagate(self, node, value):
         while node is not None:
@@ -2033,7 +1970,6 @@ class TestTimeCompute:
             node.total_value += value
             node.value = node.total_value / node.visits
             node = node.parent
-
 
     def sample_action_based_on_visits(self, node):
         probabilities = [child.visits / node.visits for child in node.children]

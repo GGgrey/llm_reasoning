@@ -4,16 +4,6 @@ from transformers import AutoModel, AutoTokenizer
 
 class PRM:
     def __init__(self, model_name: str, device_map: str = "cuda:0", torch_dtype: torch.dtype = torch.float16, trust_remote_code: bool = True):
-        """
-        Initialize the PRM class to handle model loading and scoring.
-
-        Args:
-            model_name (str): The name of the model (e.g., "internlm2_5-step-prover-critic").
-            device_map (str, optional): The device map, e.g., "auto" or "cuda". Defaults to "auto".
-            torch_dtype (torch.dtype, optional): The data type for model parameters, e.g., torch.float16. Defaults to torch.float16.
-            trust_remote_code (bool, optional): Whether to trust remote code for loading the model and tokenizer. Defaults to True.
-        """
-        
         # Define model paths for different model names
         self.model_paths = {
             "internlm2_5-step-prover-critic": "",
@@ -36,17 +26,7 @@ class PRM:
         )
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_path, trust_remote_code=trust_remote_code)
 
-
     def get_critic_score(self, prompt) -> list:
-        """
-        Given a batch of chat responses, compute the critic score for each response in the batch.
-        
-        Args:
-            prompt (list): List of chat responses to evaluate.
-            
-        Returns:
-            list: A list of computed scores for each response in the batch.
-        """
 
         # Initialize the result list to collect scores
         format_scores = []
@@ -72,17 +52,7 @@ class PRM:
 
         return format_scores
 
-
     def get_reward_score(self, prompt) -> list:
-        """
-        Given a user input and a list of assistant responses, computes the reward scores for the batch.
-
-        Args:
-            prompt (list): List of tuples (user_input, assistant_response).
-
-        Returns:
-            list: A list of computed reward scores for each (user_input, assistant_response) pair.
-        """
 
         # Initialize the result list to collect scores
         reward_scores = []

@@ -29,6 +29,7 @@ def _fix_fracs(string):
     string = new_str
     return string
 
+
 def _fix_a_slash_b(string):
     if len(string.split("/")) != 2:
         return string
@@ -43,6 +44,7 @@ def _fix_a_slash_b(string):
     except:
         return string
 
+
 def _remove_right_units(string):
     # "\\text{ " only ever occurs (at least in the val set) when describing units
     if "\\text{ " in string:
@@ -51,6 +53,7 @@ def _remove_right_units(string):
         return splits[0]
     else:
         return string
+
 
 def _fix_sqrt(string):
     if "\\sqrt" not in string:
@@ -65,6 +68,7 @@ def _fix_sqrt(string):
             new_substr = "\\sqrt" + split
         new_string += new_substr
     return new_string
+
 
 def _strip_string(string):
     # linebreaks  
@@ -135,6 +139,7 @@ def _strip_string(string):
 
     return string
 
+
 def is_equiv(str1, str2, verbose=False):
     if str1 is None and str2 is None:
         print("WARNING: Both None")
@@ -150,6 +155,7 @@ def is_equiv(str1, str2, verbose=False):
         return ss1 == ss2
     except:
         return str1 == str2
+
 
 def last_boxed_only_string(string):
     idx = string.rfind("\\boxed")

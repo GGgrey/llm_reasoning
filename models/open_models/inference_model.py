@@ -5,6 +5,7 @@ from threading import Lock, Thread
 from queue import Queue
 import torch
 
+
 model_paths = {
     "llama-3.1-8b": "/data1/sunq/projects/models/meta-llama/Llama-3.1-8B-Instruct/",
     "Qwen2.5-7B": "/data1/sunq/projects/models/Qwen/Qwen2.5-7B-Instruct/",
@@ -47,14 +48,11 @@ class Model:
         self.request_queue = Queue()  # Request queue
         self.start_processing()  # Start processing thread
 
-    
     def get_model_name(self):
         return self.model_name
     
-    
     def get_tokenizer(self):
         return self.tokenizer
-
 
     @staticmethod
     def load_llama_params(model_name="llama-2-7b"):
@@ -62,7 +60,6 @@ class Model:
         if not model_path:
             raise ValueError(f"Model {model_name} is not available. Please check the model name or path")
         return Args(model_path)
-
 
     def start_processing(self):
         """Start background thread to process requests in queue"""
@@ -75,13 +72,11 @@ class Model:
 
         Thread(target=process_queue, daemon=True).start()
 
-
     def predict(self, prompt, temperature=None, max_tokens=None, n=None, top_p=None, stop_symbol="End of answer."):
         """Submit request to queue and return response"""
         response_queue = Queue()
         self.request_queue.put((prompt, response_queue, temperature, max_tokens, n, top_p, stop_symbol))
         return response_queue.get()
-
 
     def _predict_internal(self, prompt, temperature=None, max_tokens=None, n=None, top_p=None, stop_symbol="End of answer."):
         # Use specified parameters or default parameters

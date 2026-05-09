@@ -1,4 +1,4 @@
-# # 3-shot
+# 3-shot
 standard_prompt = '''Task: Answer the given question step-by-step, and conclude with the phrase 'so the final answer is: .
 Question: Who lived longer, Theodor Haecker or Harry Vaughan Watkins? Answer: so the final answer is: Harry Vaughan Watkins. End of answer.
 Question: Why did the founder of Versus die? Answer: so the final answer is: Shot. End of answer.

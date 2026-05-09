@@ -28,8 +28,6 @@ class GSM8K(Task):
         if not os.path.isfile(path):
             raise ValueError(f"File {file} not found at {path}")
         
-
-        # 初始化 self.data 和 self.ground_truth 为空列表
         self.data = []
         self.ground_truth = []
 
@@ -47,67 +45,48 @@ class GSM8K(Task):
         self.steps = 3
         self.stops = [".", ".", "End of answer."]
 
-
     def __len__(self) -> int:
         return len(self.data)
-
 
     def get_input(self, idx: int) -> str:
         if idx >= len(self.data) or idx < 0:
             raise IndexError(f"Index {idx} out of bounds for data of length {len(self.data)}")
         return self.data[idx]
 
-
     def test_output(self, idx: int, output: str) -> dict:
-
-        # if "answer is" not in output.lower():
-        #     print("====output====")
-        #     print(output)
-        #     return {"r": 0}
-
         # Ground truth
         ground_truth = float(self.ground_truth[idx])
         tolerance = 0.01
 
-        # 提取答案
         expression = self.extract_answer(output).replace(": ", "").strip()
 
-        # 移除所有逗号，以确保数字被视为一个整体
         expression = expression.replace(",", "")
 
-        # 使用改进的正则表达式提取整个数字
         match = re.search(r"[-+]?\d+(?:\.\d+)?", expression)
         if match:
-            # 去掉千分位分隔符并转换为浮点数
             number_str = match.group(0)
             try:
                 number = float(number_str)
                 print(f"====Extracted====[{number}]")
                 extracted_numbers = [number]
             except ValueError:
-                print("====Error====: 提取的数字无法转换为浮点数")
+                print("====Error====: float conversion failed for extracted number")
                 extracted_numbers = [0]
         else:
-            print("====Error====: 未找到匹配的数字")
+            print("====Error====: no number found in the extracted expression")
             extracted_numbers = [0]
 
         print(f"====GT===={ground_truth}====Extracted===={extracted_numbers}")
 
-        # 比较提取的数字与 ground_truth
         for num in extracted_numbers:
             if abs(num - ground_truth) <= tolerance:
                 return {"r": 1}
 
         return {"r": 0}
 
-
     def extract_answer(self, output: str) -> str:
-        """
-        尝试从输出中提取答案，支持多种格式，并处理换行符和其他格式问题
-        """
-        output = output.replace("\n", " ").strip()  # 移除换行符，并清除首尾的空格
+        output = output.replace("\n", " ").strip()
         
-        # 优先寻找 "the final answer is" 格式
         if "the final answer is" in output.lower():
             return output.lower().split("the final answer is")[-1].strip().split(".")[0].strip()
         elif "final answer" in output.lower():
@@ -117,34 +96,27 @@ class GSM8K(Task):
         elif "refined solution" in output.lower():
             return output.lower().split("refined solution")[-1].strip().split(".")[0].strip()
         else:
-            # 如果没有明确的标记，则尝试返回最后一句话作为默认答案
             return output.strip().split(".")[-1].strip()
-
 
     @staticmethod
     def standard_prompt_wrap(x: str, y: str = "") -> str:
         return standard_prompt.format(input=x) + y
 
-
     @staticmethod
     def cot_prompt_wrap(x: str, y: str = "") -> str:
         return cot_prompt.format(input=x) + y
-    
 
     @staticmethod
     def reflect_cot_prompt_wrap(x: str, y: str = "") -> str:
         return reflect_cot_prompt.format(input=x) + y
-    
 
     @staticmethod
     def paraphrase_question_prompt_wrap(x: str, y: str = "") -> str:
         return paraphrase_prompt.format(input=x)
     
-
     @staticmethod
     def progressive_question_prompt_wrap(x: str, y: str = "") -> str:
         return progressive_promot.format(input=x)
-
 
     @staticmethod
     def agent_cot_prompt_wrap(x: str, y: str = "", step: int = 1,knowledge: str = "") -> str:
@@ -153,7 +125,6 @@ class GSM8K(Task):
         else:
             return agent_cot_prompt.format(input=x) + "\n" + y + "End of step."
 
-
     @staticmethod
     def value_prompt_wrap(x: str, y: str) -> str:
         if "the final answer is" not in y.lower():
@@ -161,7 +132,6 @@ class GSM8K(Task):
         else:
             return final_evaluate + x + "\n" + y + "\nEvaluation Process: \n"
         
-
     @staticmethod
     def self_process_value_prompt_wrap(x: str, y: str) -> str:
         return value_evaluate + x + "\nThought Process: " + y + "\nEvaluation Process:\n"
@@ -170,7 +140,6 @@ class GSM8K(Task):
     @staticmethod
     def self_result_value_prompt_wrap(x: str, y: str) -> str:
         return final_evaluate + x + "\nSo the final answer is:" + y + "\nEvaluation Process: \n"  
-    
     
     @staticmethod
     def value_outputs_unwrap(x: str, y: str, value_outputs: list) -> float:

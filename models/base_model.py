@@ -12,6 +12,7 @@ try:
 except ImportError:
     Model = None  # LlamaModel is not available in this environment
 
+
 completion_tokens = 0
 prompt_tokens = 0
 open_model_instance = None
@@ -70,7 +71,6 @@ def completions_with_backoff(**kwargs):
     response = openai.ChatCompletion.create(**kwargs)
 
     if response.get("finish_reason") == "content_filter":
-        print("内容被过滤，正在重试...")
         raise openai.OpenAIError("Content filtered")  
     return response
 

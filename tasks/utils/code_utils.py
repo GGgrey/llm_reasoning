@@ -10,6 +10,7 @@ def extract_code_snippet(input_string):
     match = re.search(pattern, input_string, re.DOTALL)
     return match.group(1).strip() if match else ""
 
+
 def load_jsonl(input_path):
     """
     Loads a JSONL file and returns a list of parsed JSON objects.
@@ -22,6 +23,7 @@ def load_jsonl(input_path):
                 data.append(json.loads(line))
     return data
 
+
 def save_jsonl(output_path, data):
     """
     Saves a list of dictionaries to a JSONL file.
@@ -29,6 +31,7 @@ def save_jsonl(output_path, data):
     with open(output_path, 'w', encoding='utf-8') as f:
         for item in data:
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
+
 
 def process_code_test(completation_file, prompt_file, output_file):
     """

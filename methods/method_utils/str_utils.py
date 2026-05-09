@@ -1,5 +1,6 @@
 import re
 
+
 def extract_last_question(cot_prompt):
     question_or_claim_matches = re.findall(r"(question:|claim:)", cot_prompt, re.IGNORECASE)
     

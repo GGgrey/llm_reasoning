@@ -104,7 +104,6 @@ Output:
 '''
 
 
-
 cot_prompt = '''Solve 5x5 mini crosswords. Given an input of 5 horizontal clues and 5 vertical clues, generate thoughts about which 5-letter word fits each clue, then an output of 5 rows, where each row is 5 letter separated by space.
 
 Input:

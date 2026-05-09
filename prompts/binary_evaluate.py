@@ -1,4 +1,3 @@
-
 binary_evaluate = '''\
 Evaluate whether the language model can effectively decompose the question into relevant sub-questions, determine if this decomposition aids in partially or directly answering the original question, assess the correctness of the thought process, and verify if the final answer accurately answers the question. The evaluation result should be either "Yes" or "No."
 
@@ -72,6 +71,7 @@ Question:
 
 
 import re
+
 
 def binary_evaluate_unwrap(value_outputs: list) -> float:
     """

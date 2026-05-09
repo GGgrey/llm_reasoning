@@ -8,8 +8,8 @@ from prompts.humaneval import *
 from fuzzywuzzy import fuzz
 import jsonlines
 
-
 import re
+
 
 def extract_code_snippet(input_string):
     """
@@ -24,6 +24,7 @@ def extract_code_snippet(input_string):
     pattern = r"<code>(.*?)</code>"
     match = re.search(pattern, input_string, re.DOTALL)
     return match.group(1).strip() if match else ""
+
 
 #unfinished 
 class HumanEval(Task):
@@ -45,22 +46,17 @@ class HumanEval(Task):
         if not os.path.isfile(path):
             raise ValueError(f"File {file} not found at {path}")
         
-
         self.data = []
         self.ground_truth = []
 
-        # 加载数据从 JSON 文件
         with open(path, 'r', encoding='utf-8') as f:
-            # 读取文件中的每一行，并将其作为 JSON 解析
             for line in f:
-                item = json.loads(line.strip())  # 解析每行的 JSON 数据
+                item = json.loads(line.strip())
                 question = item.get("prompt")
                 answer = item.get("canonical_solution")
 
-                # 将 question 和 answer 分别添加到对应的列表中
                 self.data.append(question)
                 self.ground_truth.append(answer)
-
         
         self.value_cache = {}
         self.steps = 3
@@ -75,38 +71,22 @@ class HumanEval(Task):
         return self.data[idx]
 
     def test_output(self, idx: int, output: str) -> dict:
-        # if 'answer is' not in output.lower():
-        #     print('====output====')
-        #     print(output)
-        #     return {'r': 0}
-
         # Ground truth
         ground_truth = self.ground_truth[idx]
    
-        # 提取答案
         answer = self.extract_answer(output)
 
-
         print(f'====GR====\n:{ground_truth}====Extracted====\n:{answer}')
-
 
         return {'r': 0}
 
     def extract_answer(self, output: str) -> str:
-        """
-        尝试从输出中提取答案，支持多种格式，并处理换行符和其他格式问题。
-        如果返回的代码较短，说明不是完整的代码，则返回空字符串。
-        """
-
-        # 提取代码片段
         code_snippet = extract_code_snippet(output)
 
-        # 判断代码片段长度是否足够完整
-        if len(code_snippet) < 10:  # 这里的长度阈值可以根据需要调整
+        if len(code_snippet) < 10:
             return ""
 
         return code_snippet
-
 
     @staticmethod
     def standard_prompt_wrap(x: str, y: str = '') -> str:
@@ -133,6 +113,7 @@ class HumanEval(Task):
             return value_evaluate + x + '\nThought Process: ' + y + '\nEvaluation Process:\n'
         else:
             return final_evaluate + x + '\n' + y + '\nEvaluation Process: \n'
+        
     @staticmethod
     def self_process_value_prompt_wrap(x: str, y: str) -> str:
         return value_evaluate + x + '\nThought Process: ' + y + '\nEvaluation Process:\n'
