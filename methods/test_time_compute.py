@@ -68,7 +68,6 @@ class TestTimeCompute:
             # Record mutual model token usage
             self.mutual_completion_tokens = 0
 
-        # load reward model
         if args.method_evaluate not in ["value", "vote", "random", "self_process_value", "self_result_value"]:
             from models.reward_models.request_gpt import request_gpt
             if args.backend_prm.startswith("Xinternlm"):
@@ -102,7 +101,6 @@ class TestTimeCompute:
         # Extract the last question, avoiding the few-shot examples
         x = extract_last_question(x)
         
-        # self evaluation
         if self.args.method_evaluate == "value":
             values = []
             for y in ys:
@@ -198,7 +196,6 @@ class TestTimeCompute:
                 chat_batch = [[{"role": "user", "content": x}, {"role": "assistant", "content": y}]
                     for y in ys]
                 values = self.prm(prompt=chat_batch)
-                # print("values:", values)
             else:
                 raise NameError(f"Unknown backend model: {self.args.backend_prm}")
 
