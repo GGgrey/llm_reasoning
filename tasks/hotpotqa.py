@@ -1,12 +1,14 @@
 import re
 import os
+
 import sympy
 import pandas as pd
 import json
-from tasks.base import Task, DATA_PATH
-from prompts.hotpotqa import * 
 from fuzzywuzzy import fuzz
 import jsonlines
+
+from tasks.base import Task, DATA_PATH
+from prompts.hotpotqa import * 
 
 
 class HotpotQA(Task):

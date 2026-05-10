@@ -1,13 +1,15 @@
+import os
 import logging
 import argparse
+from typing import Any, Optional
+from functools import partial
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from functools import partial
-import torch.multiprocessing as mp  
-import os  
+import torch.multiprocessing as mp   
 import torch  
+
 from models.base_model import initialize_model, open_model_instance, reward_model_instance 
-from typing import Any, Optional
 
 
 os.environ["OMP_NUM_THREADS"] = "1"  

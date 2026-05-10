@@ -108,9 +108,9 @@ def test_prm_model():
         for y in ys
     ]
     
-        # Get critic scores for the responses
+    # Get critic scores for the responses
     critic_scores = prm_model.get_critic_score(chat_batch)
-    print("Critic Scores:", critic_scores)
+    print("Critic scores:", critic_scores)
 
     # # Get reward scores for the responses paired with the user input
     # reward_scores = prm_model.get_reward_score(chat_batch)

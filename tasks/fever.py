@@ -1,11 +1,12 @@
 import re
 import os
-# import sympy
+import json
+
 import pandas as pd
+from fuzzywuzzy import fuzz
+
 from tasks.base import Task, DATA_PATH
 from prompts.fever import * 
-import json
-from fuzzywuzzy import fuzz
 
 
 wiki_evaluate = '''Evaluate whether the language model can effectively decompose the claim into relevant sub-questions, and assess whether this decomposition helps in partially or directly verifying the original claim. The outcome will determine if this process of decomposition is "Likely" or "Impossible" to aid in verifing the claim.

@@ -1,12 +1,14 @@
 import re
 import os
+import json
+
 import sympy
 import pandas as pd
-import json
-from tasks.base import Task, DATA_PATH
-from prompts.gsm8k import * 
 from fuzzywuzzy import fuzz
 import jsonlines
+
+from tasks.base import Task, DATA_PATH
+from prompts.gsm8k import * 
 
 
 class MATH(Task):
@@ -92,6 +94,7 @@ class MATH(Task):
     @staticmethod
     def cot_prompt_wrap(x: str, y: str = '') -> str:
         return cot_prompt.format(input=x) + y
+    
     @staticmethod
     def reflect_cot_prompt_wrap(x: str, y: str = '') -> str:
         return reflect_cot_prompt.format(input=x) + y
@@ -109,6 +112,7 @@ class MATH(Task):
             return value_evaluate + x + '\nThought Process: ' + y + '\nEvaluation Process:\n'
         else:
             return final_evaluate + x + '\n' + y + '\nEvaluation Process: \n'
+        
     @staticmethod
     def value_outputs_unwrap(x: str, y: str, value_outputs: list) -> float:
         # Value map for scoring with probabilities between 0 and 1

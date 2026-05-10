@@ -1,7 +1,9 @@
 import re
 import os
+
 import sympy
 import pandas as pd
+
 from tasks.base import Task, DATA_PATH
 from prompts.game24 import * 
 

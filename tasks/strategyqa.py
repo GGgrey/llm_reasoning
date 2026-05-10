@@ -1,11 +1,13 @@
 import re
 import os
+
 import sympy
 import pandas as pd
 import json
+from fuzzywuzzy import fuzz
+
 from tasks.base import Task, DATA_PATH
 from prompts.strategyqa import * 
-from fuzzywuzzy import fuzz
 
 
 class StrategyQA(Task):

@@ -1,10 +1,12 @@
 import re
 import os
+
 import sympy
 import pandas as pd
+from fuzzywuzzy import fuzz
+
 from tasks.base import Task, DATA_PATH
 from prompts.bamboogle import * 
-from fuzzywuzzy import fuzz
 
 
 def get_current_numbers(y: str) -> str:

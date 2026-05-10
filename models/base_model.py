@@ -1,9 +1,11 @@
 import os
-import openai
 import backoff
 import time
 import traceback
 import re
+
+import openai
+
 from  models.reward_models.intern_prm import PRM
 
 # Try importing LlamaModel; if not available, set it to None
@@ -51,6 +53,7 @@ if api_key:
     openai.api_key = api_key
 else:
     print("Warning: OPENAI_API_KEY is not set")
+    
 api_base = os.getenv("OPENAI_API_BASE", "")
 if api_base:
     print(f"Warning: OPENAI_API_BASE is set to {api_base}")

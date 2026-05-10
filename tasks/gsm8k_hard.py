@@ -1,12 +1,13 @@
 import re
 import os
+import json
+
 import sympy
 import pandas as pd
-import json
+from fuzzywuzzy import fuzz
+
 from tasks.base import Task, DATA_PATH
 from prompts.gsm8k import * 
-from fuzzywuzzy import fuzz
-import jsonlines
 
 
 class MATH(Task):
@@ -123,6 +124,7 @@ class MATH(Task):
             return value_evaluate + x + '\nThought Process: ' + y + '\nEvaluation Process:\n'
         else:
             return final_evaluate + x + '\n' + y + '\nEvaluation Process: \n'
+        
     @staticmethod
     def self_process_value_prompt_wrap(x: str, y: str) -> str:
         return value_evaluate + x + '\nThought Process: ' + y + '\nEvaluation Process:\n'

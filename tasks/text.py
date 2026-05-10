@@ -1,5 +1,6 @@
 import os
 import re
+
 from tasks.base import Task, DATA_PATH
 from prompts.text import *
 from models.base_model import gpt

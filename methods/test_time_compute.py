@@ -1,21 +1,22 @@
-import numpy as np
 from functools import partial
-from models.base_model import gpt
-import concurrent.futures
 from collections import Counter
+import random
+import math
+import operator
+from functools import reduce
+
+import numpy as np
+import torch.nn as nn
+import torch
+from vllm import LLM, SamplingParams
+from transformers import AutoModel, AutoTokenizer
+
+from models.base_model import gpt
 from methods.method_utils.str_utils import extract_last_question, extract_last_answer
 from prompts.self_refine import *
 from prompts.binary_evaluate import *
-import random
-import torch.nn as nn
-import torch
-import math
-from functools import reduce
-import operator
-from vllm import LLM, SamplingParams
 from methods.method_utils.condidence_utils import calculate_confidence_score
 from methods.method_utils.common_utils import get_random_points
-from transformers import AutoModel, AutoTokenizer
 
 
 model_paths = {

@@ -1,9 +1,10 @@
-from transformers import AutoTokenizer
-from vllm import LLM, SamplingParams
 import re
 from threading import Lock, Thread
 from queue import Queue
+
 import torch
+from transformers import AutoTokenizer
+from vllm import LLM, SamplingParams
 
 
 model_paths = {
